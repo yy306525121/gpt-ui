@@ -88,7 +88,7 @@ class PureHttp {
                     useUserStoreHook()
                       .handRefreshToken({ refreshToken: data.refreshToken })
                       .then(res => {
-                        const token = res.data.accessToken;
+                        const token = res.data.token;
                         config.headers["Authorization"] = formatToken(token);
                         PureHttp.requests.forEach(cb => cb(token));
                         PureHttp.requests = [];
@@ -100,7 +100,7 @@ class PureHttp {
                   resolve(PureHttp.retryOriginalRequest(config));
                 } else {
                   config.headers["Authorization"] = formatToken(
-                    data.accessToken
+                    data.token
                   );
                   resolve(config);
                 }
@@ -188,6 +188,14 @@ class PureHttp {
     config?: PureHttpRequestConfig
   ): Promise<P> {
     return this.request<P>("get", url, params, config);
+  }
+
+  public post_form<P>(
+      url: string,
+      params: AxiosRequestConfig,
+      config?: PureHttpRequestConfig
+  ): Promise<P> {
+    return this.request<P>("post", stringify(params), config)
   }
 }
 
